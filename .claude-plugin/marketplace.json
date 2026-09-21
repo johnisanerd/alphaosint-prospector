@@ -1,0 +1,11 @@
+{
+  "name": "alphaosint",
+  "owner": { "name": "Alpha OSINT", "url": "https://alphaosint.com" },
+  "plugins": [
+    {
+      "name": "alphaosint-prospector",
+      "source": "./",
+      "description": "ICP-driven B2B prospecting: hiring signals, LinkedIn and Crunchbase enrichment, a 0-100 lead score, decision-makers and verified emails."
+    }
+  ]
+}

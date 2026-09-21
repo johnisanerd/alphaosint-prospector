@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "alphaosint-prospector": {
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/johnisanerd/alphaosint-prospector", "alpha-prospector", "serve"]
+    }
+  }
+}

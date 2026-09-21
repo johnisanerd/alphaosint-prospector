@@ -1,0 +1,46 @@
+{
+  "name": "US B2B software teams building outbound sales",
+  "offering": "Sales engagement tooling for outbound teams",
+  "industries": [
+    "software",
+    "information technology",
+    "internet",
+    "saas"
+  ],
+  "exclude_industries": [
+    "staffing",
+    "recruiting"
+  ],
+  "employee_range": [
+    50,
+    1000
+  ],
+  "countries": [
+    "US"
+  ],
+  "location": "",
+  "hiring_keywords": [
+    "sales development representative",
+    "business development representative"
+  ],
+  "hiring_recency_days": 14,
+  "target_titles": [
+    "VP Sales",
+    "Head of Sales",
+    "Chief Revenue Officer",
+    "Director Sales Development"
+  ],
+  "target_departments": [
+    "c_suite",
+    "sales"
+  ],
+  "exclude_companies": [],
+  "exclude_domains": [],
+  "weights": {
+    "fit": 35,
+    "hiring": 30,
+    "funding": 15,
+    "momentum": 10,
+    "reachability": 10
+  }
+}

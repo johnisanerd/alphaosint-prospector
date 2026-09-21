@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+dist/
+*.egg-info/
+.env
+*.db
+leads.csv
+leads.json
+leads.xlsx
+uv.lock

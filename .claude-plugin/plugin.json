@@ -1,0 +1,10 @@
+{
+  "name": "alphaosint-prospector",
+  "version": "0.1.0",
+  "description": "B2B prospecting inside Claude. Finds companies that are hiring for the roles you sell into, adds LinkedIn and Crunchbase data, scores them 0-100 against your ICP, and finds decision-makers with verified emails. Research only, it sends nothing.",
+  "author": { "name": "Alpha OSINT", "url": "https://alphaosint.com" },
+  "homepage": "https://github.com/johnisanerd/alphaosint-prospector",
+  "repository": "https://github.com/johnisanerd/alphaosint-prospector",
+  "license": "MIT",
+  "keywords": ["prospecting", "lead-generation", "sales", "b2b", "apify", "mcp", "linkedin", "crunchbase", "indeed"]
+}
