@@ -9,7 +9,7 @@ Shared rules: `../prospect/references/conventions.md`.
 
 ## Steps
 1. `list_leads(limit=25)` to see what is unenriched (`enriched: false`).
-2. `enrich_companies(top=10)` for the best unenriched accounts, or pass `company_ids` for specific ones. Worst case is about 2.6 cents per company for all three sources.
+2. `enrich_companies(top=10)` for the best unenriched accounts, or pass `company_ids` for specific ones. Worst case is about 1.5 cents per company for all three sources.
 3. Report `matched` per source and `mismatches_dropped`.
 4. `list_leads` again. Scores are recomputed automatically after each stage; `score_leads` is only needed after the ICP changes.
 

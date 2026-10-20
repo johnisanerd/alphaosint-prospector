@@ -134,8 +134,8 @@ You pay Apify for the Actor runs, per result. The server estimates each call at 
 | Stage | Worst case at list price |
 |---|---|
 | Source | about $0.004 to $0.0095 per job row |
-| Enrich | about $0.026 per company (Indeed, LinkedIn and Crunchbase) |
-| People search | about $0.0016 per person returned |
+| Enrich | about $0.015 per company (Indeed, LinkedIn and Crunchbase) |
+| People search | about $0.0031 per person returned, profile included |
 | Emails | about $0.05 per company (10 pages, 3 leads, 3 verifications) |
 
 Defaults: $2.00 per session, $1.00 per call. Change them in `~/.alphaosint/.env` (see [.env.example](.env.example)).

@@ -1,7 +1,8 @@
 """Actor registry: ids, list prices per event, worst-case cost estimators and input builders.
 
-Prices are the published pay-per-event list prices (USD) at the entry tier. Paid Apify plans
-pay the same or less, so estimates are upper bounds. Inputs are built from each Actor's live
+Prices are the published pay-per-event list prices (USD) at the entry tier, taking the higher
+of the current and the next scheduled price (checked 2026-10-20). Paid Apify plans pay the same
+or less, so estimates are upper bounds. Inputs are built from each Actor's live
 input schema; nothing here guesses a field name.
 """
 
@@ -45,11 +46,11 @@ def _est_indeed_company(i: dict[str, Any]) -> float:
 
 
 def _est_linkedin_jobs(i: dict[str, Any]) -> float:
-    return max(_n(i.get("jobUrls")), int(i.get("maxJobs", 25))) * 0.00396
+    return max(_n(i.get("jobUrls")), int(i.get("maxJobs", 25))) * 0.00001
 
 
 def _est_linkedin_company(i: dict[str, Any]) -> float:
-    return _n(i.get("companyUrls")) * 0.00495 + _n(i.get("companyNames")) * (0.00495 + 0.00396)
+    return _n(i.get("companyUrls")) * 0.00001 + _n(i.get("companyNames")) * (0.00001 + 0.00396)
 
 
 def _est_crunchbase(i: dict[str, Any]) -> float:
@@ -57,12 +58,12 @@ def _est_crunchbase(i: dict[str, Any]) -> float:
 
 
 def _est_people_search(i: dict[str, Any]) -> float:
-    per = 0.001 + (0.000594 if i.get("enrichProfiles", True) else 0)
+    per = 0.0006 + (0.0025 if i.get("enrichProfiles", True) else 0)
     return int(i.get("maxResults", 25)) * per
 
 
 def _est_linkedin_profile(i: dict[str, Any]) -> float:
-    return _n(i.get("profileUrls")) * 0.004455
+    return _n(i.get("profileUrls")) * 0.00001
 
 
 def _est_contact_info(i: dict[str, Any]) -> float:
@@ -82,15 +83,15 @@ ACTORS: dict[str, ActorSpec] = {
                   {"job-scraped": 0.0038, "company-details-added": 0.0057}, _est_indeed_jobs),
         ActorSpec("indeed_company", "johnvc/indeed-company-api",
                   {"company-scraped": 0.00285, "company-listed": 0.00038}, _est_indeed_company),
-        ActorSpec("linkedin_jobs", "johnvc/linkedin-jobs-api", {"job-scraped": 0.00396}, _est_linkedin_jobs),
+        ActorSpec("linkedin_jobs", "johnvc/linkedin-jobs-api", {"job-scraped": 0.00001}, _est_linkedin_jobs),
         ActorSpec("linkedin_company", "johnvc/linkedin-company-api",
-                  {"company-scraped": 0.00495, "company-searched": 0.00396}, _est_linkedin_company),
+                  {"company-scraped": 0.00001, "company-searched": 0.00396}, _est_linkedin_company),
         ActorSpec("crunchbase_company", "johnvc/crunchbase-company-api",
                   {"company-scraped": 0.00855}, _est_crunchbase),
         ActorSpec("linkedin_people", "johnvc/linkedin-people-search-api",
-                  {"person-found": 0.001, "person-enriched": 0.000594}, _est_people_search),
+                  {"person-found": 0.0006, "person-enriched": 0.0025}, _est_people_search),
         ActorSpec("linkedin_profile", "johnvc/linkedin-profile-api",
-                  {"profile-scraped": 0.004455}, _est_linkedin_profile),
+                  {"profile-scraped": 0.00001}, _est_linkedin_profile),
         ActorSpec("contact_info", "vdrmota/contact-info-scraper",
                   {"scraped-page": 0.002, "lead": 0.005, "email-verification": 0.004}, _est_contact_info,
                   min_charge_cap=0.50),
