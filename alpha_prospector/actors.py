@@ -58,8 +58,10 @@ def _est_crunchbase(i: dict[str, Any]) -> float:
 
 
 def _est_people_search(i: dict[str, Any]) -> float:
+    # The Actor returns a full page of about 10 people even when maxResults is smaller (seen 2026-09-21
+    # and 2026-10-29), and bills each one, so estimate at least a page.
     per = 0.0006 + (0.0025 if i.get("enrichProfiles", True) else 0)
-    return int(i.get("maxResults", 25)) * per
+    return max(10, int(i.get("maxResults", 25))) * per
 
 
 def _est_linkedin_profile(i: dict[str, Any]) -> float:

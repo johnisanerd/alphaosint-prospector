@@ -143,3 +143,9 @@ def test_network_blip_is_retried(monkeypatch):
     assert r._patiently(flaky, "run1") == "ok" and calls["n"] == 3
     with pytest.raises(r.ActorRunError, match="run1"):
         r._patiently(lambda: (_ for _ in ()).throw(ConnectionError("x")), "run1", attempts=2)
+
+
+def test_people_search_estimate_covers_a_full_page():
+    est = actors.ACTORS["linkedin_people"].estimate
+    assert est({"maxResults": 3}) == pytest.approx(10 * (0.0006 + 0.0025))
+    assert est({"maxResults": 25, "enrichProfiles": False}) == pytest.approx(25 * 0.0006)

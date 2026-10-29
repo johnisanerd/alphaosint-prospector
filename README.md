@@ -135,7 +135,7 @@ You pay Apify for the Actor runs, per result. The server estimates each call at 
 |---|---|
 | Source | about $0.004 to $0.0095 per job row |
 | Enrich | about $0.015 per company (Indeed, LinkedIn and Crunchbase) |
-| People search | about $0.0031 per person returned, profile included |
+| People search | about $0.031 per company searched (a page of about 10 people, profiles included) |
 | Emails | about $0.05 per company (10 pages, 3 leads, 3 verifications) |
 
 Defaults: $2.00 per session, $1.00 per call. Change them in `~/.alphaosint/.env` (see [.env.example](.env.example)).
@@ -150,7 +150,8 @@ Two things to know:
 - Crunchbase shows round structure and investors publicly, not dates or amounts. Round dates come from the LinkedIn funding summary when LinkedIn has one.
 - Job boards match titles loosely. Postings whose title does not contain every word of one of your hiring keywords are ignored and counted, so add each real variant as its own keyword.
 - LinkedIn job rows carry no website, so those accounts need enrichment before emails can be found.
-- People search depends on public search indexing of LinkedIn profiles. Small companies often return nobody. The email step usually finds named people where search does not.
+- People search returns people whose public profile mentions the company and title, including some who have since left. Prospector keeps only people whose current employer matches the account. Small companies often return nobody; the email step usually finds named people there.
+- Indeed job rows currently come without employer details, so Prospector looks each employer up on Indeed's company pages during enrichment to get the website it joins on.
 - A `catch_all` or `unknown` email verdict means unverified. The export says so.
 
 ## Privacy and terms
