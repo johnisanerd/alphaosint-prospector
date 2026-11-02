@@ -1,6 +1,6 @@
 [project]
 name = "alphaosint-prospector"
-version = "0.1.0"
+version = "0.2.0"
 description = "B2B prospecting inside Claude: source accounts from hiring signals, enrich with LinkedIn and Crunchbase data, score against your ICP, find decision-makers and verified emails."
 readme = "README.md"
 license = { text = "MIT" }

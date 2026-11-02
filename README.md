@@ -2,9 +2,9 @@
 
 B2B prospecting inside Claude. Describe your ideal customer once, and get back a ranked list of companies that are hiring for the roles you sell into, with funding data, a 0-100 score you can audit, named decision-makers and verified work emails.
 
-It is a Claude Code plugin: an MCP server with 14 tools, a local SQLite lead store, and 6 skills. It researches. It never sends anything.
+It is a Claude Code plugin: a local MCP server with 14 tools, a local SQLite lead store, and 6 skills. It researches. It never sends anything.
 
-Built by [Alpha OSINT](https://alphaosint.com) on our own [Apify Actors](https://apify.com/johnvc?fpr=9n7kx3&fp_sid=skillrepo).
+Built by [Alpha OSINT](https://alphaosint.com) on our own [Apify Actors](https://apify.com/johnvc).
 
 ## Why another prospecting tool
 
@@ -26,19 +26,19 @@ ICP  ->  source (job postings)  ->  enrich (firmographics + funding)  ->  emails
 
 | Stage | Actor | What it adds |
 |---|---|---|
-| Source | [Indeed Jobs API](https://apify.com/johnvc/indeed-jobs-api?fpr=9n7kx3&fp_sid=skillrepo) | Open roles by keyword, filtered to titles that really match |
-| Source (optional) | [LinkedIn Jobs API](https://apify.com/johnvc/linkedin-jobs-api?fpr=9n7kx3&fp_sid=skillrepo) | A second hiring feed |
-| Enrich | [Indeed Company API](https://apify.com/johnvc/indeed-company-api?fpr=9n7kx3&fp_sid=skillrepo) | Website (the join key), industry, headcount, HQ, employer rating |
-| Enrich | [LinkedIn Company API](https://apify.com/johnvc/linkedin-company-api?fpr=9n7kx3&fp_sid=skillrepo) | Headcount band, industry, HQ, followers, last funding round |
-| Enrich | [Crunchbase Company API](https://apify.com/johnvc/crunchbase-company-api?fpr=9n7kx3&fp_sid=skillrepo) | Rounds, investors, key people, traffic growth, tech stack |
-| People | [LinkedIn People Search API](https://apify.com/johnvc/linkedin-people-search-api?fpr=9n7kx3&fp_sid=skillrepo) | People holding your target titles at the account |
-| Emails | [Contact Details Scraper](https://apify.com/vdrmota/contact-info-scraper?fpr=9n7kx3&fp_sid=skillrepo) (third party) | Company inbox, named leads by department, email verification |
+| Source | [Indeed Jobs API](https://apify.com/johnvc/indeed-jobs-api) | Open roles by keyword, filtered to titles that really match |
+| Source (optional) | [LinkedIn Jobs API](https://apify.com/johnvc/linkedin-jobs-api) | A second hiring feed |
+| Enrich | [Indeed Company API](https://apify.com/johnvc/indeed-company-api) | Website (the join key), industry, headcount, HQ, employer rating |
+| Enrich | [LinkedIn Company API](https://apify.com/johnvc/linkedin-company-api) | Headcount band, industry, HQ, followers, last funding round |
+| Enrich | [Crunchbase Company API](https://apify.com/johnvc/crunchbase-company-api) | Rounds, investors, key people, traffic growth, tech stack |
+| People | [LinkedIn People Search API](https://apify.com/johnvc/linkedin-people-search-api) | People holding your target titles at the account |
+| Emails | [Contact Details Scraper](https://apify.com/vdrmota/contact-info-scraper) (third party) | Company inbox, named leads by department, email verification |
 
-Related Actors you can chain by hand: [LinkedIn Profile API](https://apify.com/johnvc/linkedin-profile-api?fpr=9n7kx3&fp_sid=skillrepo), [LinkedIn Posts API](https://apify.com/johnvc/linkedin-posts-api?fpr=9n7kx3&fp_sid=skillrepo), [PitchBook Company API](https://apify.com/johnvc/pitchbook-company-api?fpr=9n7kx3&fp_sid=skillrepo), [Google Maps Place ID Contact API](https://apify.com/johnvc/google-maps-place-id-contact-api?fpr=9n7kx3&fp_sid=skillrepo).
+Related Actors you can chain by hand: [LinkedIn Profile API](https://apify.com/johnvc/linkedin-profile-api), [LinkedIn Posts API](https://apify.com/johnvc/linkedin-posts-api), [PitchBook Company API](https://apify.com/johnvc/pitchbook-company-api), [Google Maps Place ID Contact API](https://apify.com/johnvc/google-maps-place-id-contact-api).
 
 ## Install
 
-You need [uv](https://docs.astral.sh/uv/), an [Apify account](https://apify.com?fpr=9n7kx3&fp_sid=skillrepo) (a paid plan is recommended, see Cost) and Claude Code. New to Claude Code? [Try it with this referral link](https://claude.ai/referral/uIlpa7nPLg).
+You need [uv](https://docs.astral.sh/uv/), an [Apify account](https://apify.com) (a paid plan is recommended, see Cost) and Claude Code.
 
 In Claude Code:
 
@@ -50,11 +50,7 @@ In Claude Code:
 /plugin install alphaosint-prospector@alphaosint
 ```
 
-Then add your Apify token and restart Claude Code:
-
-```bash
-mkdir -p ~/.alphaosint && echo "APIFY_TOKEN=your_token_here" >> ~/.alphaosint/.env
-```
+When you enable the plugin, Claude Code asks for your Apify API token (Apify Console, Settings, Integrations) and stores it in your system's credential store. It also asks for your Apify plan tier and two spend caps; change those later in `/config`.
 
 MCP server only (Claude Desktop, Cursor, anything that speaks MCP):
 
@@ -63,7 +59,8 @@ MCP server only (Claude Desktop, Cursor, anything that speaks MCP):
   "mcpServers": {
     "alphaosint-prospector": {
       "command": "uvx",
-      "args": ["--from", "git+https://github.com/johnisanerd/alphaosint-prospector", "alpha-prospector", "serve"]
+      "args": ["--from", "git+https://github.com/johnisanerd/alphaosint-prospector@v0.2.0", "alpha-prospector", "serve"],
+      "env": { "APIFY_TOKEN": "your_apify_token" }
     }
   }
 }
@@ -138,7 +135,7 @@ You pay Apify for the Actor runs, per result. The server estimates each call at 
 | People search | about $0.031 per company searched (a page of about 10 people, profiles included) |
 | Emails | about $0.05 per company (10 pages, 3 leads, 3 verifications) |
 
-Defaults: $2.00 per session, $1.00 per call. Change them in `~/.alphaosint/.env` (see [.env.example](.env.example)).
+Defaults: $2.00 per session, $1.00 per call. Change them in the plugin's settings (`/config`). The standalone CLI reads them from `~/.alphaosint/.env` (see [.env.example](.env.example)).
 
 Two things to know:
 
@@ -154,9 +151,17 @@ Two things to know:
 - Indeed job rows currently come without employer details, so Prospector looks each employer up on Indeed's company pages during enrichment to get the website it joins on.
 - A `catch_all` or `unknown` email verdict means unverified. The export says so.
 
+## What it runs, sends and stores
+
+- **Runs:** a local Python MCP server, started with `uv run --locked` from the plugin folder. The first start installs the pinned dependencies from `uv.lock` into the plugin's data directory.
+- **Sends:** only calls to the Apify API (`api.apify.com`), made with your token, to run the Actors in the table above. Their inputs are your ICP's hiring keywords, locations, company names and website domains, and the job titles you target. Apify bills the runs to your account. Nothing is sent to an Alpha OSINT server, and there is no telemetry.
+- **Stores:** your ICP, the companies, contacts, scores and a spend log in a SQLite file, `prospector.db`, in the plugin's data directory. Claude Code deletes that directory when you uninstall the plugin. Exports are written where you ask (by default `~/alphaosint-leads.csv`).
+
+See [PRIVACY.md](PRIVACY.md) for the privacy policy.
+
 ## Privacy and terms
 
-Data is stored locally in `~/.alphaosint/prospector.db`. Named contacts and work emails are personal data under GDPR and similar laws; you need a lawful reason to hold and use them. The Actors read public pages. You are responsible for complying with the terms of the sites involved and with anti-spam law where you operate. This project sends no messages.
+Named contacts and work emails are personal data under GDPR and similar laws; you need a lawful reason to hold and use them. The Actors read public pages. You are responsible for complying with the terms of the sites involved and with anti-spam law where you operate. This project sends no messages.
 
 ## Development
 
@@ -165,7 +170,7 @@ git clone https://github.com/johnisanerd/alphaosint-prospector && cd alphaosint-
 ```
 
 ```bash
-uv venv && uv pip install -e ".[dev,xlsx]" && uv run pytest -q
+uv sync --locked --extra dev --extra xlsx && uv run pytest -q
 ```
 
 Tests use a fake Apify backend and spend nothing.
@@ -174,6 +179,8 @@ Tests use a fake Apify backend and spend nothing.
 
 Inspired by [insaight](https://github.com/spirosbax/insaight) by Spiros Baxevanakis, which showed how well an MCP server plus skills works for prospect research. Prospector is an independent implementation with a different scope: account sourcing, multi-source enrichment and scoring.
 
-Disclosure: apify.com links carry the author's affiliate code, and the `johnvc/*` Actors are built by the author.
+Disclosure: the `johnvc/*` Actors are built and sold on Apify by the author.
+
+Support: [open an issue](https://github.com/johnisanerd/alphaosint-prospector/issues).
 
 MIT License.

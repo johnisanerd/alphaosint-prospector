@@ -11,8 +11,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Callable
 
-TRACKER = "fpr=9n7kx3"
-
 
 @dataclass(frozen=True)
 class ActorSpec:
@@ -24,7 +22,7 @@ class ActorSpec:
 
     @property
     def url(self) -> str:
-        return f"https://apify.com/{self.actor_id}?{TRACKER}"
+        return f"https://apify.com/{self.actor_id}"
 
 
 def _n(value: Any) -> int:

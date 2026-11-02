@@ -1,10 +1,45 @@
 {
   "name": "alphaosint-prospector",
-  "version": "0.1.0",
+  "displayName": "Alpha OSINT Prospector",
+  "version": "0.2.0",
   "description": "B2B prospecting inside Claude. Finds companies that are hiring for the roles you sell into, adds LinkedIn and Crunchbase data, scores them 0-100 against your ICP, and finds decision-makers with verified emails. Research only, it sends nothing.",
   "author": { "name": "Alpha OSINT", "url": "https://alphaosint.com" },
   "homepage": "https://github.com/johnisanerd/alphaosint-prospector",
   "repository": "https://github.com/johnisanerd/alphaosint-prospector",
+  "documentationUrl": "https://github.com/johnisanerd/alphaosint-prospector#readme",
+  "supportUrl": "https://github.com/johnisanerd/alphaosint-prospector/issues",
+  "privacyPolicyUrl": "https://github.com/johnisanerd/alphaosint-prospector/blob/main/PRIVACY.md",
+  "icon": "./assets/icon.png",
   "license": "MIT",
-  "keywords": ["prospecting", "lead-generation", "sales", "b2b", "apify", "mcp", "linkedin", "crunchbase", "indeed"]
+  "keywords": ["prospecting", "lead-generation", "sales", "b2b", "apify", "mcp", "linkedin", "crunchbase", "indeed"],
+  "userConfig": {
+    "apify_token": {
+      "type": "string",
+      "title": "Apify API token",
+      "description": "Your token from Apify Console > Settings > Integrations. Actor runs are billed to this Apify account.",
+      "sensitive": true,
+      "required": true
+    },
+    "apify_tier": {
+      "type": "string",
+      "title": "Apify plan tier",
+      "description": "Your Apify plan, used to price tiered events in the spend log.",
+      "options": ["FREE", "BRONZE", "SILVER", "GOLD"],
+      "default": "BRONZE"
+    },
+    "session_budget_usd": {
+      "type": "number",
+      "title": "Session budget (USD)",
+      "description": "Hard cap on Apify spend per Claude session. The email step needs at least 0.50 left.",
+      "default": 2,
+      "min": 0
+    },
+    "call_budget_usd": {
+      "type": "number",
+      "title": "Per-call budget (USD)",
+      "description": "Hard cap on the estimated cost of a single tool call.",
+      "default": 1,
+      "min": 0
+    }
+  }
 }
