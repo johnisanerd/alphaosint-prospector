@@ -6,6 +6,7 @@ from functools import lru_cache
 from typing import Any
 
 from mcp.server.mcpserver import MCPServer
+from mcp_types import ToolAnnotations
 
 from . import actors, pipeline
 from .config import db_path, home, load_settings
@@ -15,6 +16,13 @@ from .icp import DEFAULT_ICP, IcpError, validate_icp
 from .runner import ActorRunError, BudgetExceeded, Runner
 
 mcp = MCPServer("alphaosint-prospector")
+
+# Reads touch only the local lead store. Paid tools run Apify Actors (open world) and add rows;
+# set_icp replaces the saved ICP and export_leads can overwrite the file the user names.
+READ = ToolAnnotations(read_only_hint=True, open_world_hint=False)
+LOCAL_WRITE = ToolAnnotations(read_only_hint=False, destructive_hint=False, open_world_hint=False)
+REPLACE = ToolAnnotations(read_only_hint=False, destructive_hint=True, idempotent_hint=True, open_world_hint=False)
+PAID = ToolAnnotations(read_only_hint=False, destructive_hint=False, open_world_hint=True)
 
 
 @lru_cache(maxsize=1)
@@ -55,7 +63,7 @@ def _pick(store: Store, company_ids: list[int] | None, top: int, only_unenriched
     return ids[:top]
 
 
-@mcp.tool()
+@mcp.tool(title="Get config", annotations=READ)
 @_guard
 def get_config() -> dict[str, Any]:
     """Setup status, budgets, spend so far, and lead counts. Call once per session."""
@@ -67,7 +75,7 @@ def get_config() -> dict[str, Any]:
     }
 
 
-@mcp.tool()
+@mcp.tool(title="Get ICP", annotations=READ)
 @_guard
 def get_icp() -> dict[str, Any]:
     """The saved Ideal Customer Profile, or the blank template when none is saved."""
@@ -75,7 +83,7 @@ def get_icp() -> dict[str, Any]:
     return {"saved": store.get_icp(), "template": DEFAULT_ICP}
 
 
-@mcp.tool()
+@mcp.tool(title="Save ICP", annotations=REPLACE)
 @_guard
 def set_icp(icp: dict[str, Any]) -> dict[str, Any]:
     """Validate and save the ICP. Required: hiring_keywords and target_titles."""
@@ -85,7 +93,7 @@ def set_icp(icp: dict[str, Any]) -> dict[str, Any]:
     return {"saved": clean}
 
 
-@mcp.tool()
+@mcp.tool(title="Estimate cost", annotations=READ)
 @_guard
 def estimate_cost(max_companies: int = 25, max_jobs_per_keyword: int = 25, enrich_top: int = 10,
                   contacts_top: int = 5, emails_top: int = 5, leads_per_domain: int = 3) -> dict[str, Any]:
@@ -108,7 +116,7 @@ def estimate_cost(max_companies: int = 25, max_jobs_per_keyword: int = 25, enric
             "note": "Upper bound at list price. Actors bill per delivered result, so real spend is usually lower."}
 
 
-@mcp.tool()
+@mcp.tool(title="Source companies", annotations=PAID)
 @_guard
 def source_companies(sources: list[str] | None = None, max_companies: int = 25,
                      max_jobs_per_keyword: int = 25) -> dict[str, Any]:
@@ -121,7 +129,7 @@ def source_companies(sources: list[str] | None = None, max_companies: int = 25,
     return out
 
 
-@mcp.tool()
+@mcp.tool(title="Enrich companies", annotations=PAID)
 @_guard
 def enrich_companies(company_ids: list[int] | None = None, top: int = 10, use_indeed: bool = True,
                      use_linkedin: bool = True, use_crunchbase: bool = True) -> dict[str, Any]:
@@ -134,7 +142,7 @@ def enrich_companies(company_ids: list[int] | None = None, top: int = 10, use_in
     return out
 
 
-@mcp.tool()
+@mcp.tool(title="Find contacts", annotations=PAID)
 @_guard
 def find_contacts(company_ids: list[int] | None = None, top: int = 5, per_company: int = 3,
                   use_search: bool = True) -> dict[str, Any]:
@@ -147,7 +155,7 @@ def find_contacts(company_ids: list[int] | None = None, top: int = 5, per_compan
     return out
 
 
-@mcp.tool()
+@mcp.tool(title="Find emails", annotations=PAID)
 @_guard
 def find_emails(company_ids: list[int] | None = None, top: int = 5, leads_per_domain: int = 3,
                 verify: bool = True, pages_per_domain: int = 10) -> dict[str, Any]:
@@ -160,7 +168,7 @@ def find_emails(company_ids: list[int] | None = None, top: int = 5, leads_per_do
     return out
 
 
-@mcp.tool()
+@mcp.tool(title="Score leads", annotations=LOCAL_WRITE)
 @_guard
 def score_leads() -> dict[str, Any]:
     """Re-score every account against the saved ICP. Free and deterministic."""
@@ -168,7 +176,7 @@ def score_leads() -> dict[str, Any]:
     return {"scored": pipeline.score_all(store, _icp(store))}
 
 
-@mcp.tool()
+@mcp.tool(title="List leads", annotations=READ)
 @_guard
 def list_leads(min_score: float = 0, limit: int = 25) -> list[dict[str, Any]]:
     """Ranked accounts, one slim line each. Use get_lead for the full record."""
@@ -176,7 +184,7 @@ def list_leads(min_score: float = 0, limit: int = 25) -> list[dict[str, Any]]:
     return [pipeline.lead_summary(store, cid) for cid in store.ranked_company_ids(min_score, limit)]
 
 
-@mcp.tool()
+@mcp.tool(title="Get lead", annotations=READ)
 @_guard
 def get_lead(company_id: int) -> dict[str, Any]:
     """Everything known about one account: score reasons, signals, contacts, emails."""
@@ -184,7 +192,7 @@ def get_lead(company_id: int) -> dict[str, Any]:
     return pipeline.lead_detail(store, company_id) or {"error": "not_found"}
 
 
-@mcp.tool()
+@mcp.tool(title="Export leads", annotations=REPLACE)
 @_guard
 def export_leads(path: str = "~/alphaosint-leads.csv", format: str = "csv", min_score: float = 0,
                  limit: int | None = None) -> dict[str, Any]:
@@ -193,7 +201,7 @@ def export_leads(path: str = "~/alphaosint-leads.csv", format: str = "csv", min_
     return _export(store, path, format, min_score, limit)
 
 
-@mcp.tool()
+@mcp.tool(title="List runs", annotations=READ)
 @_guard
 def list_runs(limit: int = 20) -> list[dict[str, Any]]:
     """Recent Actor runs with run ids, item counts, estimated and actual cost."""
@@ -201,7 +209,7 @@ def list_runs(limit: int = 20) -> list[dict[str, Any]]:
     return store.list_runs(limit)
 
 
-@mcp.tool()
+@mcp.tool(title="Get spend", annotations=READ)
 @_guard
 def get_spend() -> dict[str, Any]:
     """Spend this session and all time, against the session cap."""

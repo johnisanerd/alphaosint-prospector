@@ -129,7 +129,7 @@ class Runner:
     def backend(self) -> Backend:
         if self._backend is None:
             if not self.settings.has_token:
-                raise ActorRunError("APIFY_TOKEN is not set. Add it to ~/.alphaosint/.env and restart.")
+                raise ActorRunError("No Apify token is set. Add it in the plugin's settings (or set APIFY_TOKEN for the CLI) and restart.")
             self._backend = ApifyBackend(self.settings.apify_token)
         return self._backend
 
@@ -146,12 +146,12 @@ class Runner:
         if est > self.settings.call_budget_usd:
             raise BudgetExceeded(
                 f"Estimated ${est:.2f} is over the per-call cap of ${self.settings.call_budget_usd:.2f}. "
-                "Lower the limits, or raise PROSPECTOR_CALL_BUDGET_USD in ~/.alphaosint/.env."
+                "Lower the limits, or raise the per-call budget in the plugin's settings (PROSPECTOR_CALL_BUDGET_USD for the CLI)."
             )
         if est > self.remaining():
             raise BudgetExceeded(
                 f"Estimated ${est:.2f} is over the remaining session budget of ${self.remaining():.2f} "
-                f"(cap ${self.settings.session_budget_usd:.2f}). Raise PROSPECTOR_SESSION_BUDGET_USD to continue."
+                f"(cap ${self.settings.session_budget_usd:.2f}). Raise the session budget in the plugin's settings (PROSPECTOR_SESSION_BUDGET_USD for the CLI) to continue."
             )
 
     def run(self, key: str, run_input: dict[str, Any], max_items: int | None = None) -> RunResult:

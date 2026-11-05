@@ -1,6 +1,10 @@
 {
   "name": "alphaosint",
-  "owner": { "name": "Alpha OSINT", "url": "https://alphaosint.com" },
+  "owner": {
+    "name": "Alpha OSINT",
+    "url": "https://alphaosint.com"
+  },
+  "description": "Alpha OSINT plugins for Claude Code: B2B prospecting from live hiring signals.",
   "plugins": [
     {
       "name": "alphaosint-prospector",

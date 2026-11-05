@@ -3,7 +3,15 @@
     "alphaosint-prospector": {
       "type": "stdio",
       "command": "uv",
-      "args": ["run", "--project", "${CLAUDE_PLUGIN_ROOT}", "alpha-prospector", "serve"]
+      "args": ["run", "--locked", "--project", "${CLAUDE_PLUGIN_ROOT}", "alpha-prospector", "serve"],
+      "env": {
+        "UV_PROJECT_ENVIRONMENT": "${CLAUDE_PLUGIN_DATA}/venv",
+        "ALPHAOSINT_HOME": "${CLAUDE_PLUGIN_DATA}",
+        "APIFY_TOKEN": "${user_config.apify_token}",
+        "PROSPECTOR_APIFY_TIER": "${user_config.apify_tier}",
+        "PROSPECTOR_SESSION_BUDGET_USD": "${user_config.session_budget_usd}",
+        "PROSPECTOR_CALL_BUDGET_USD": "${user_config.call_budget_usd}"
+      }
     }
   }
 }

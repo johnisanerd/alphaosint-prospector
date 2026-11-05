@@ -1,4 +1,8 @@
-"""Paths, secrets and budget settings. Everything lives under ~/.alphaosint."""
+"""Paths, secrets and budget settings.
+
+Everything lives under ALPHAOSINT_HOME: the plugin's data directory when run as a Claude Code
+plugin, ~/.alphaosint for the standalone CLI.
+"""
 
 from __future__ import annotations
 
